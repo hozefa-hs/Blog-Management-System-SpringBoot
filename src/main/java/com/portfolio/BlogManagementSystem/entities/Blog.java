@@ -3,6 +3,8 @@ package com.portfolio.BlogManagementSystem.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,5 +27,7 @@ public class Blog {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @OneToMany(mappedBy = "blog", cascade = CascadeType.ALL)
+    private List<Comment> comment;
 
 }

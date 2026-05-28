@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
+
 @SpringBootTest
 public class BlogTests {
 
@@ -15,11 +17,19 @@ public class BlogTests {
 
     @Test
     void createBlogTest() {
-        CreateBlogDto createBlogDto = new CreateBlogDto("Spring boot guide", "How to start spring boot");
 
+        CreateBlogDto createBlogDto = new CreateBlogDto("haaaaaa", "Dollars");
         BlogResponseDto blog = blogService.createBlog(createBlogDto, 1L);
-
         System.out.println(blog);
 
+    }
+
+    @Test
+    void getAllBlogsTest() {
+        List<BlogResponseDto> allBlogs = blogService.getAllBlogs();
+
+        for (BlogResponseDto blog : allBlogs) {
+            System.out.println(blog);
+        }
     }
 }

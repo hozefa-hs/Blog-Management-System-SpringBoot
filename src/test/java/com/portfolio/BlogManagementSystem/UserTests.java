@@ -17,7 +17,7 @@ public class UserTests {
 
     @Test
     void createUserTest() {
-        CreateUserDto createUserDto = new CreateUserDto("hozefa@gmail.com", "12345678");
+        CreateUserDto createUserDto = new CreateUserDto("john@gmail.com", "12345678");
         UserResponseDto user = userService.createUser(createUserDto);
         System.out.println(user);
     }
@@ -38,7 +38,7 @@ public class UserTests {
 
     @Test
     void deleteUserTest() {
-        Boolean deleteUser = userService.deleteUser(1L);
+        Boolean deleteUser = userService.deleteUser(2L);
         if (deleteUser) {
             System.out.println("User deleted successfully");
         }

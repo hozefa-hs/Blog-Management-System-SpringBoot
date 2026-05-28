@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class BlogServiceIMPL implements BlogService {
@@ -30,6 +32,15 @@ public class BlogServiceIMPL implements BlogService {
         newBlog.setUser(user);
         Blog savedBlog = blogRepository.save(newBlog);
         return modelMapper.map(savedBlog, BlogResponseDto.class);
+    }
+
+    @Override
+    public List<BlogResponseDto> getAllBlogs() {
+        List<Blog> blogList = blogRepository.findAll();
+        return blogList
+                .stream()
+                .map(blog -> modelMapper.map(blog, BlogResponseDto.class))
+                .toList();
     }
 }
 
