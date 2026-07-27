@@ -6,6 +6,9 @@ import com.portfolio.BlogManagementSystem.services.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 
@@ -15,9 +18,18 @@ public class UserTests {
     @Autowired
     UserService userService;
 
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
     @Test
     void createUserTest() {
-        CreateUserDto createUserDto = new CreateUserDto("john@gmail.com", "12345678");
+        CreateUserDto createUserDto = new CreateUserDto(
+                "hunt@gmail.com",
+                passwordEncoder().encode("12345678"),
+                "ethan852",
+                "admin");
         UserResponseDto user = userService.createUser(createUserDto);
         System.out.println(user);
     }
@@ -32,19 +44,17 @@ public class UserTests {
 
     @Test
     void findUserByIdTest() {
-        UserResponseDto userById = userService.findUserById(2L);
+        UserResponseDto userById = userService.findUserById(3L);
         System.out.println(userById);
     }
 
     @Test
     void deleteUserTest() {
-        Boolean deleteUser = userService.deleteUser(2L);
+        Boolean deleteUser = userService.deleteUser(4L);
         if (deleteUser) {
             System.out.println("User deleted successfully");
         }
     }
-
-
 
 
 }
