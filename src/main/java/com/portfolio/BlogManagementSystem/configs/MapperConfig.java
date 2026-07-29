@@ -1,4 +1,4 @@
-package com.portfolio.BlogManagementSystem.config;
+package com.portfolio.BlogManagementSystem.configs;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;

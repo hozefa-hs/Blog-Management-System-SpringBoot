@@ -1,33 +1,42 @@
-package com.portfolio.BlogManagementSystem.config;
+package com.portfolio.BlogManagementSystem.configs;
 
+import com.portfolio.BlogManagementSystem.filters.JwtAuthFilter;
 import com.portfolio.BlogManagementSystem.services.implementations.CustomUserDetailsService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final JwtAuthFilter jwtAuthFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/publicc").permitAll()
-                                .anyRequest().authenticated())
-                .httpBasic(withDefaults());
+                .authorizeHttpRequests(auth -> auth
+//                        auth.requestMatchers("/publicc").permitAll()
+                        .requestMatchers("/authenticate").permitAll()
+                        .anyRequest().authenticated());
+
+        //request first comes to JwtAuthFilter and if user credentials are correct it will set
+        //the security context holder and then request does not go to UsernamePasswordAuthenticationFilter.
+        http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
@@ -39,13 +48,13 @@ public class SecurityConfig {
     */
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
     public AuthenticationManager authenticationManager(CustomUserDetailsService customUserDetailsService,
-                                                       PasswordEncoder passwordEncoder){
+                                                       PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider(customUserDetailsService);
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
 
