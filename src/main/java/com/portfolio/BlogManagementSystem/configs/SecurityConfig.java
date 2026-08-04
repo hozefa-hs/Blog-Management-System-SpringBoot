@@ -1,11 +1,13 @@
 package com.portfolio.BlogManagementSystem.configs;
 
+import com.portfolio.BlogManagementSystem.enums.Permissions;
 import com.portfolio.BlogManagementSystem.filters.JwtAuthFilter;
 import com.portfolio.BlogManagementSystem.services.implementations.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -30,8 +32,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-//                        auth.requestMatchers("/publicc").permitAll()
+                        .requestMatchers("/public").permitAll()
                         .requestMatchers("/authenticate").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/blog/create").hasAuthority(Permissions.BLOG_WRITE.name())
                         .anyRequest().authenticated());
 
         //request first comes to JwtAuthFilter and if user credentials are correct it will set

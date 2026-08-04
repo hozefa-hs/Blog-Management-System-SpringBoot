@@ -1,5 +1,6 @@
 package com.portfolio.BlogManagementSystem.entities;
 
+import com.portfolio.BlogManagementSystem.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -7,7 +8,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @AllArgsConstructor
@@ -29,7 +33,8 @@ public class User implements UserDetails {
 
     private String password;
 
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Blog> blog;
@@ -37,9 +42,30 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Comment> comment;
 
+
+    //This method tells spring that which authority (roles & permissions) does this current user has.
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role));
+
+        Set<SimpleGrantedAuthority> authorities = new HashSet<>();
+
+        //Setting SimpleGrantedAuthority for each role.
+        //First add a role.
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + role.name()));
+
+        //second add permissions
+        //each role can have multiple permissions
+        Set<SimpleGrantedAuthority> permissions = role.getPermissions()
+                .stream()                   //creating a stream because each permission we need to convert into SimpleGrantedAuthority.
+                //
+                .map(permission -> new SimpleGrantedAuthority(permission.name()))
+                .collect(Collectors.toSet());
+
+        //permissions associated with the current role will  be added.
+        authorities.addAll(permissions);
+
+        //this will return the current role and permissions associated with the current role.
+        return authorities;
     }
 
     @Override
