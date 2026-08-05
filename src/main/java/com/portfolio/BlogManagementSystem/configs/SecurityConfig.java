@@ -32,9 +32,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/public").permitAll()
+                        .requestMatchers("/public/**").permitAll()
                         .requestMatchers("/authenticate").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/blog/create").hasAuthority(Permissions.BLOG_WRITE.name())
+                        .requestMatchers(HttpMethod.POST, "/blogs/create-blog").hasAuthority(Permissions.BLOG_WRITE.name())
+                        .requestMatchers("/blogs/all-blogs").hasRole("ADMIN")
                         .anyRequest().authenticated());
 
         //request first comes to JwtAuthFilter and if user credentials are correct it will set
