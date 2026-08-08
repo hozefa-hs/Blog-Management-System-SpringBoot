@@ -7,6 +7,7 @@ import com.portfolio.BlogManagementSystem.repositories.UserRepository;
 import com.portfolio.BlogManagementSystem.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,10 +18,22 @@ public class UserServiceIMPL implements UserService {
 
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserResponseDto createUser(CreateUserDto createUserDto) {
-        User newUser = modelMapper.map(createUserDto, User.class);
+        //TODO check if user is already present
+        if(userRepository.findByUsername(createUserDto.getUsername()).isPresent()){
+            throw new RuntimeException("Username "+createUserDto.getUsername()+" already exists");
+        }
+
+        User newUser = new User();
+        newUser.setUsername(createUserDto.getUsername());
+        newUser.setEmail(createUserDto.getEmail());
+        newUser.setRole(createUserDto.getRole());
+        newUser.setPassword(passwordEncoder.encode(createUserDto.getPassword()));
+
+        //User newUser = modelMapper.map(createUserDto, User.class);
         User savedUser = userRepository.save(newUser);
         return modelMapper.map(savedUser, UserResponseDto.class);
     }

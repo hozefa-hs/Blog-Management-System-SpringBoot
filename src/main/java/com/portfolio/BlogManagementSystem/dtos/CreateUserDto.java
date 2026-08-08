@@ -1,5 +1,6 @@
 package com.portfolio.BlogManagementSystem.dtos;
 
+import com.portfolio.BlogManagementSystem.enums.Role;
 import lombok.*;
 
 @Data
@@ -15,5 +16,5 @@ public class CreateUserDto {
 
     private String username;
 
-    private String role;
+    private Role role;
 }

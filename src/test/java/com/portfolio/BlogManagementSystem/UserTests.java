@@ -2,6 +2,7 @@ package com.portfolio.BlogManagementSystem;
 
 import com.portfolio.BlogManagementSystem.dtos.CreateUserDto;
 import com.portfolio.BlogManagementSystem.dtos.UserResponseDto;
+import com.portfolio.BlogManagementSystem.enums.Role;
 import com.portfolio.BlogManagementSystem.services.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class UserTests {
                 "hunt@gmail.com",
                 passwordEncoder().encode("12345678"),
                 "ethan852",
-                "admin");
+                Role.ADMIN);
         UserResponseDto user = userService.createUser(createUserDto);
         System.out.println(user);
     }

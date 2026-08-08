@@ -33,6 +33,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/public/**").permitAll()
                         .requestMatchers("/authenticate").permitAll()
+                        .requestMatchers("/register").permitAll()
                         //the below requestMatchers is replaced by method security @PreAuthorize("hasAuthority('BLOG_WRITE')")
                         //.requestMatchers(HttpMethod.POST, "/blogs/create-blog").hasAuthority(Permissions.BLOG_WRITE.name())
                         //.requestMatchers("/blogs/all-blogs").hasRole("ADMIN")
