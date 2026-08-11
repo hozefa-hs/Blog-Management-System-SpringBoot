@@ -10,6 +10,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -37,11 +38,13 @@ public class SecurityConfig {
                         //the below requestMatchers is replaced by method security @PreAuthorize("hasAuthority('BLOG_WRITE')")
                         //.requestMatchers(HttpMethod.POST, "/blogs/create-blog").hasAuthority(Permissions.BLOG_WRITE.name())
                         //.requestMatchers("/blogs/all-blogs").hasRole("ADMIN")
-                        .anyRequest().authenticated());
+                        .anyRequest().authenticated())
+
+                .oauth2Login(Customizer.withDefaults());
 
         //request first comes to JwtAuthFilter and if user credentials are correct it will set
         //the security context holder and then request does not go to UsernamePasswordAuthenticationFilter.
-        http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+        //http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
