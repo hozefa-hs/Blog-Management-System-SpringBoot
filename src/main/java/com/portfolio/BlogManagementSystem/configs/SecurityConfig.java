@@ -1,12 +1,10 @@
 package com.portfolio.BlogManagementSystem.configs;
 
-import com.portfolio.BlogManagementSystem.enums.Permissions;
 import com.portfolio.BlogManagementSystem.filters.JwtAuthFilter;
 import com.portfolio.BlogManagementSystem.services.implementations.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -38,13 +36,13 @@ public class SecurityConfig {
                         //the below requestMatchers is replaced by method security @PreAuthorize("hasAuthority('BLOG_WRITE')")
                         //.requestMatchers(HttpMethod.POST, "/blogs/create-blog").hasAuthority(Permissions.BLOG_WRITE.name())
                         //.requestMatchers("/blogs/all-blogs").hasRole("ADMIN")
-                        .anyRequest().authenticated())
+                        .anyRequest().authenticated());
 
-                .oauth2Login(Customizer.withDefaults());
+                //.oauth2Login(Customizer.withDefaults());
 
         //request first comes to JwtAuthFilter and if user credentials are correct it will set
         //the security context holder and then request does not go to UsernamePasswordAuthenticationFilter.
-        //http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
