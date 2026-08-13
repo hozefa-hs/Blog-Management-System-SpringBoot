@@ -8,6 +8,7 @@ import com.portfolio.BlogManagementSystem.repositories.BlogRepository;
 import com.portfolio.BlogManagementSystem.repositories.UserRepository;
 import com.portfolio.BlogManagementSystem.services.BlogService;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,7 @@ public class BlogServiceIMPL implements BlogService {
 
     @Override
     @Transactional
-    public BlogResponseDto createBlog(CreateBlogDto createBlogDto, Long userId) {
+    public BlogResponseDto createBlog(@Valid CreateBlogDto createBlogDto, Long userId) {
 
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User with id " + userId + " not found while creating blog"));
 

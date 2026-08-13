@@ -9,6 +9,7 @@ import com.portfolio.BlogManagementSystem.repositories.BlogRepository;
 import com.portfolio.BlogManagementSystem.repositories.CommentRepository;
 import com.portfolio.BlogManagementSystem.repositories.UserRepository;
 import com.portfolio.BlogManagementSystem.services.CommentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,7 @@ public class CommentServiceIMPL implements CommentService {
 
 
     @Override
-    public CommentResponseDto createComment(CreateCommentDto createCommentDto, Long blogId, Long userId) {
+    public CommentResponseDto createComment(@Valid CreateCommentDto createCommentDto, Long blogId, Long userId) {
 
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User with Id " + userId + " not found while commenting on blog"));
         Blog blog = blogRepository.findById(blogId).orElseThrow(() -> new IllegalArgumentException("Blog with Id " + blogId + " not found while commenting on blog"));

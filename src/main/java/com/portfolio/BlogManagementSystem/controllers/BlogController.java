@@ -4,6 +4,7 @@ import com.portfolio.BlogManagementSystem.dtos.BlogResponseDto;
 import com.portfolio.BlogManagementSystem.dtos.CreateBlogDto;
 import com.portfolio.BlogManagementSystem.entities.User;
 import com.portfolio.BlogManagementSystem.services.BlogService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +23,9 @@ public class BlogController {
 
     @PostMapping("/create-blog")
     @PreAuthorize("hasAuthority('BLOG_WRITE')")
-    public ResponseEntity<BlogResponseDto> createBlog(@RequestBody CreateBlogDto createBlogDto, @AuthenticationPrincipal User user) {
+    public ResponseEntity<BlogResponseDto> createBlog(@RequestBody @Valid CreateBlogDto createBlogDto, @AuthenticationPrincipal User user) {
         BlogResponseDto response = blogService.createBlog(createBlogDto, user.getId());
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

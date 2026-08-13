@@ -5,9 +5,13 @@ import com.portfolio.BlogManagementSystem.dtos.CreateUserDto;
 import com.portfolio.BlogManagementSystem.dtos.UserResponseDto;
 import com.portfolio.BlogManagementSystem.entities.User;
 import com.portfolio.BlogManagementSystem.enums.Role;
+import com.portfolio.BlogManagementSystem.exceptions.ResourceNotFoundException;
 import com.portfolio.BlogManagementSystem.services.UserService;
 import com.portfolio.BlogManagementSystem.util.JwtUtil;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,25 +29,25 @@ public class AuthController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponseDto> registerUser(@RequestBody CreateUserDto createUserDto) {
+    public ResponseEntity<UserResponseDto> registerUser(@RequestBody @Valid CreateUserDto createUserDto) {
         createUserDto.setRole(Role.USER);
         UserResponseDto userResponseDto = userService.createUser(createUserDto);
-        return ResponseEntity.ok(userResponseDto);
+        return new ResponseEntity<>(userResponseDto, HttpStatus.CREATED);
     }
 
     //You should have an admin in your database first.
     //because an admin can only create another admin.
     @PostMapping("/register-admin")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UserResponseDto> registerAdmin(@RequestBody CreateUserDto createUserDto) {
+    public ResponseEntity<UserResponseDto> registerAdmin(@RequestBody @Valid CreateUserDto createUserDto) {
         createUserDto.setRole(Role.ADMIN);
         UserResponseDto userResponseDto = userService.createUser(createUserDto);
-        return ResponseEntity.ok(userResponseDto);
+        return new ResponseEntity<>(userResponseDto, HttpStatus.CREATED);
     }
 
 
     @PostMapping("/authenticate")
-    public String loginAndGenerateToken(@RequestBody AuthRequestDto authRequestDto) {
+    public String loginAndGenerateToken(@RequestBody @Valid AuthRequestDto authRequestDto) {
 
         try {
 
@@ -56,16 +60,22 @@ public class AuthController {
             //generate JWT token
             return jwtUtil.generateToken(authRequestDto.getUsername());
 
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e);
+        } catch (ResourceNotFoundException e) {
+            throw new ResourceNotFoundException("Login error : "+e);
         }
     }
 
     @DeleteMapping("/delete-user/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
-        Boolean isDeleteUser = userService.deleteUser(id);
-        return isDeleteUser ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/get-user/{id}")
+    public ResponseEntity<UserResponseDto> getUserById(@PathVariable Long id) {
+        UserResponseDto userById = userService.findUserById(id);
+        return ResponseEntity.ok(userById);
     }
 
 }

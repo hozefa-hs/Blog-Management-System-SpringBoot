@@ -3,8 +3,10 @@ package com.portfolio.BlogManagementSystem.services.implementations;
 import com.portfolio.BlogManagementSystem.dtos.CreateUserDto;
 import com.portfolio.BlogManagementSystem.dtos.UserResponseDto;
 import com.portfolio.BlogManagementSystem.entities.User;
+import com.portfolio.BlogManagementSystem.exceptions.ResourceNotFoundException;
 import com.portfolio.BlogManagementSystem.repositories.UserRepository;
 import com.portfolio.BlogManagementSystem.services.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,10 +23,10 @@ public class UserServiceIMPL implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public UserResponseDto createUser(CreateUserDto createUserDto) {
+    public UserResponseDto createUser(@Valid CreateUserDto createUserDto) {
         //TODO check if user is already present
         if(userRepository.findByUsername(createUserDto.getUsername()).isPresent()){
-            throw new RuntimeException("Username "+createUserDto.getUsername()+" already exists");
+            throw new ResourceNotFoundException("Username "+createUserDto.getUsername()+" already exists");
         }
 
         User newUser = new User();
@@ -49,14 +51,14 @@ public class UserServiceIMPL implements UserService {
 
     @Override
     public UserResponseDto findUserById(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found with id " + id));
+        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found with id " + id));
         return modelMapper.map(user, UserResponseDto.class);
     }
 
     @Override
     public Boolean deleteUser(Long id) {
         if(id == null) return false;
-        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found with id " + id));
+        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found with id " + id));
         userRepository.deleteById(id);
         return true;
     }
