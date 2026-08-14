@@ -1,5 +1,6 @@
 package com.portfolio.BlogManagementSystem.configs;
 
+import com.portfolio.BlogManagementSystem.enums.Role;
 import com.portfolio.BlogManagementSystem.filters.JwtAuthFilter;
 import com.portfolio.BlogManagementSystem.services.implementations.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
@@ -30,9 +31,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/public/**").permitAll()
-                        .requestMatchers("/authenticate").permitAll()
-                        .requestMatchers("/register").permitAll()
+                        .requestMatchers("/public/**", "/auth/**").permitAll()
+                        .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())
                         //the below requestMatchers is replaced by method security @PreAuthorize("hasAuthority('BLOG_WRITE')")
                         //.requestMatchers(HttpMethod.POST, "/blogs/create-blog").hasAuthority(Permissions.BLOG_WRITE.name())
                         //.requestMatchers("/blogs/all-blogs").hasRole("ADMIN")

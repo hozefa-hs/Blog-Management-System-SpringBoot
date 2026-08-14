@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/auth")
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
@@ -46,7 +47,7 @@ public class AuthController {
     }
 
 
-    @PostMapping("/authenticate")
+    @PostMapping("/login")
     public String loginAndGenerateToken(@RequestBody @Valid AuthRequestDto authRequestDto) {
 
         try {
@@ -63,19 +64,6 @@ public class AuthController {
         } catch (ResourceNotFoundException e) {
             throw new ResourceNotFoundException("Login error : "+e);
         }
-    }
-
-    @DeleteMapping("/delete-user/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/get-user/{id}")
-    public ResponseEntity<UserResponseDto> getUserById(@PathVariable Long id) {
-        UserResponseDto userById = userService.findUserById(id);
-        return ResponseEntity.ok(userById);
     }
 
 }
