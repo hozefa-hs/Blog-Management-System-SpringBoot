@@ -2,8 +2,10 @@ package com.portfolio.BlogManagementSystem.services.implementations;
 
 import com.portfolio.BlogManagementSystem.dtos.BlogResponseDto;
 import com.portfolio.BlogManagementSystem.dtos.CreateBlogDto;
+import com.portfolio.BlogManagementSystem.dtos.UpdateBlogDto;
 import com.portfolio.BlogManagementSystem.entities.Blog;
 import com.portfolio.BlogManagementSystem.entities.User;
+import com.portfolio.BlogManagementSystem.exceptions.ResourceNotFoundException;
 import com.portfolio.BlogManagementSystem.repositories.BlogRepository;
 import com.portfolio.BlogManagementSystem.repositories.UserRepository;
 import com.portfolio.BlogManagementSystem.services.BlogService;
@@ -11,6 +13,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -52,18 +55,51 @@ public class BlogServiceIMPL implements BlogService {
                 .map(blog -> modelMapper.map(blog, BlogResponseDto.class))
                 .toList();
     }
+
+    @Override
+    public Boolean deleteBlog(Long userId, Long blogId) {
+        if (blogId == null) {
+            return false;
+        }
+
+        //Ownership check and does Blog exists done in single method
+        blogRepository.findByIdAndUserId(blogId, userId).orElseThrow(() -> new ResourceNotFoundException("Blog with id " + blogId + " not found"));
+
+        //Blog blog = blogRepository.findById(blogId).orElseThrow(() -> new ResourceNotFoundException("Blog with id " + blogId + " not found"));
+
+        //Ownership check
+        /*
+        if (!blog.getUser().getId()
+                .equals(userId)) {
+            throw new AccessDeniedException("You can only delete your own blog");
+        }*/
+
+        blogRepository.deleteById(blogId);
+        return true;
+    }
+
+    @Override
+    public BlogResponseDto updateBlog(Long userId, Long blogId, UpdateBlogDto updateBlogDto) {
+
+        //Ownership check and does Blog exists done in single method
+        Blog blog = blogRepository.findByIdAndUserId(blogId, userId).orElseThrow(() -> new ResourceNotFoundException("Blog not found with id : " + blogId));
+
+        //Blog blog = blogRepository.findById(blogId).orElseThrow(() -> new ResourceNotFoundException("Blog not found with id : " + blogId));
+
+        //ownership check
+        /*
+        if (!blog.getUser().getId()
+                .equals(userId)) {
+            throw new AccessDeniedException("You can only update your own blog");
+        }
+        */
+
+        blog.setTitle(updateBlogDto.getTitle());
+        blog.setDescription(updateBlogDto.getDescription());
+
+        Blog updatedBlog = blogRepository.save(blog);
+
+        return modelMapper.map(updatedBlog, BlogResponseDto.class);
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 

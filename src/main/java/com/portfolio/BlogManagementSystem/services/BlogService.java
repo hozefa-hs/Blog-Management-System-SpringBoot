@@ -2,6 +2,7 @@ package com.portfolio.BlogManagementSystem.services;
 
 import com.portfolio.BlogManagementSystem.dtos.BlogResponseDto;
 import com.portfolio.BlogManagementSystem.dtos.CreateBlogDto;
+import com.portfolio.BlogManagementSystem.dtos.UpdateBlogDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,4 +15,9 @@ public interface BlogService {
     List<BlogResponseDto> getAllBlogs();
 
     List<BlogResponseDto> getAllBlogsByUserId(Long userId);
+
+    Boolean deleteBlog(Long userId, Long blogId);
+
+    BlogResponseDto updateBlog(Long userId, Long blogId, UpdateBlogDto updateBlogDto);
+
 }

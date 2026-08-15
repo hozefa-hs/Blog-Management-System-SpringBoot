@@ -2,6 +2,7 @@ package com.portfolio.BlogManagementSystem.controllers;
 
 import com.portfolio.BlogManagementSystem.dtos.BlogResponseDto;
 import com.portfolio.BlogManagementSystem.dtos.CreateBlogDto;
+import com.portfolio.BlogManagementSystem.dtos.UpdateBlogDto;
 import com.portfolio.BlogManagementSystem.entities.User;
 import com.portfolio.BlogManagementSystem.services.BlogService;
 import jakarta.validation.Valid;
@@ -40,6 +41,23 @@ public class BlogController {
     public ResponseEntity<List<BlogResponseDto>> getAllBlogs() {
         List<BlogResponseDto> allBlogs = blogService.getAllBlogs();
         return ResponseEntity.ok(allBlogs);
+    }
+
+    @DeleteMapping("/delete/{blogId}")
+    public ResponseEntity<Void> deleteBlog(@PathVariable Long blogId, @AuthenticationPrincipal User user){
+        blogService.deleteBlog(user.getId(), blogId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/update/{blogId}")
+    public ResponseEntity<BlogResponseDto> updateBlog(
+            @PathVariable Long blogId,
+            @Valid @RequestBody UpdateBlogDto updateBlogDto,
+            @AuthenticationPrincipal User user) {
+
+        BlogResponseDto response = blogService.updateBlog(user.getId(), blogId, updateBlogDto);
+
+        return ResponseEntity.ok(response);
     }
 
 }

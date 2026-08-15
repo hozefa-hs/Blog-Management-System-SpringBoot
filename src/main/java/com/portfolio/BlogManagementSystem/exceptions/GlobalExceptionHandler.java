@@ -76,8 +76,25 @@ public class GlobalExceptionHandler {
     }
 
 
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException exception, HttpServletRequest request) {
+
+        ErrorResponse errorResponse = ErrorResponse
+                .builder()
+                .timeStamp(LocalDateTime.now())
+                .status(HttpStatus.FORBIDDEN.value())
+                .error(HttpStatus.FORBIDDEN.getReasonPhrase())
+                .message("You don't have permission to access this resource")
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+
+    }
+
+
     @ExceptionHandler(AuthorizationDeniedException.class)
-    public ResponseEntity<ErrorResponse> handleAccessDeniedException(AuthorizationDeniedException exception, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> handleAuthorizationDeniedException(AuthorizationDeniedException exception, HttpServletRequest request) {
 
         ErrorResponse errorResponse = ErrorResponse
                 .builder()
