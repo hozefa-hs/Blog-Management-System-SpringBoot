@@ -28,6 +28,13 @@ public class BlogController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    @GetMapping("/getAllMyBlogs")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<List<BlogResponseDto>> getAllBlogsByUserId(@AuthenticationPrincipal User user) {
+        List<BlogResponseDto> blogsByUserId = blogService.getAllBlogsByUserId(user.getId());
+        return ResponseEntity.ok(blogsByUserId);
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all-blogs")
     public ResponseEntity<List<BlogResponseDto>> getAllBlogs() {

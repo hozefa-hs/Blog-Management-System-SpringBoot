@@ -12,4 +12,6 @@ public interface BlogService {
     BlogResponseDto createBlog(CreateBlogDto createBlogDto, Long userId);
 
     List<BlogResponseDto> getAllBlogs();
+
+    List<BlogResponseDto> getAllBlogsByUserId(Long userId);
 }

@@ -43,6 +43,15 @@ public class BlogServiceIMPL implements BlogService {
                 .map(blog -> modelMapper.map(blog, BlogResponseDto.class))
                 .toList();
     }
+
+    @Override
+    public List<BlogResponseDto> getAllBlogsByUserId(Long userId) {
+        List<Blog> allBlogsByUserIdList = blogRepository.findAllByUserId(userId);
+        return allBlogsByUserIdList
+                .stream()
+                .map(blog -> modelMapper.map(blog, BlogResponseDto.class))
+                .toList();
+    }
 }
 
 
