@@ -6,6 +6,7 @@ import com.portfolio.BlogManagementSystem.dtos.UpdateCommentDto;
 import com.portfolio.BlogManagementSystem.entities.Blog;
 import com.portfolio.BlogManagementSystem.entities.Comment;
 import com.portfolio.BlogManagementSystem.entities.User;
+import com.portfolio.BlogManagementSystem.enums.Role;
 import com.portfolio.BlogManagementSystem.exceptions.ResourceNotFoundException;
 import com.portfolio.BlogManagementSystem.repositories.BlogRepository;
 import com.portfolio.BlogManagementSystem.repositories.CommentRepository;
@@ -75,7 +76,17 @@ public class CommentServiceIMPL implements CommentService {
     @Override
     public void deleteComment(Long commentId, Long userId) {
         if (commentId == null) return;
-        commentRepository.findByIdAndUserId(commentId, userId).orElseThrow(() -> new ResourceNotFoundException("Comment with id " + commentId + " not found"));
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User with id " + userId + " not found"));
+
+        if (user.getRole() == Role.USER) {
+            commentRepository.findByIdAndUserId(commentId, userId).orElseThrow(() -> new ResourceNotFoundException("Comment with id " + commentId + " not found"));
+        }
+        //else condition when User is Admin
+        else {
+            commentRepository.findById(commentId).orElseThrow(() -> new ResourceNotFoundException("Comment with id " + commentId + " not found"));
+        }
+
 
         commentRepository.deleteById(commentId);
     }

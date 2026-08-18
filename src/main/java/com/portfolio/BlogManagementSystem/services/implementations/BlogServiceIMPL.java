@@ -7,6 +7,7 @@ import com.portfolio.BlogManagementSystem.dtos.UpdateBlogDto;
 import com.portfolio.BlogManagementSystem.entities.Blog;
 import com.portfolio.BlogManagementSystem.entities.Comment;
 import com.portfolio.BlogManagementSystem.entities.User;
+import com.portfolio.BlogManagementSystem.enums.Role;
 import com.portfolio.BlogManagementSystem.exceptions.ResourceNotFoundException;
 import com.portfolio.BlogManagementSystem.repositories.BlogRepository;
 import com.portfolio.BlogManagementSystem.repositories.UserRepository;
@@ -16,9 +17,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -58,14 +61,23 @@ public class BlogServiceIMPL implements BlogService {
                 .toList();
     }
 
+    //@PreAuthorize("hasAuthority('BLOG_DELETE')")
     @Override
-    public Boolean deleteBlog(Long userId, Long blogId) {
-        if (blogId == null) {
-            return false;
+    public void deleteBlog(Long userId, Long blogId) {
+        if (blogId == null) return;
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User with id " + userId + " not found"));
+
+        if (user.getRole().equals(Role.USER)) {
+            //Ownership check and does Blog exists done in single method
+            //Ownership check means if the blog belongs to current user or not.
+            blogRepository.findByIdAndUserId(blogId, userId).orElseThrow(() -> new ResourceNotFoundException("Blog with id " + blogId + " not found"));
+        }
+        //else condition when User is Admin
+        else {
+            blogRepository.findById(blogId).orElseThrow(() -> new ResourceNotFoundException("Blog with id " + blogId + " not found"));
         }
 
-        //Ownership check and does Blog exists done in single method
-        blogRepository.findByIdAndUserId(blogId, userId).orElseThrow(() -> new ResourceNotFoundException("Blog with id " + blogId + " not found"));
 
         //Blog blog = blogRepository.findById(blogId).orElseThrow(() -> new ResourceNotFoundException("Blog with id " + blogId + " not found"));
 
@@ -77,7 +89,6 @@ public class BlogServiceIMPL implements BlogService {
         }*/
 
         blogRepository.deleteById(blogId);
-        return true;
     }
 
     @Override

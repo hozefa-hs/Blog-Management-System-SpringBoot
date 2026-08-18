@@ -17,7 +17,7 @@ public interface BlogService {
 
     List<BlogResponseDto> getAllBlogsByUserId(Long userId);
 
-    Boolean deleteBlog(Long userId, Long blogId);
+    void deleteBlog(Long userId, Long blogId);
 
     BlogResponseDto updateBlog(Long userId, Long blogId, UpdateBlogDto updateBlogDto);
 
