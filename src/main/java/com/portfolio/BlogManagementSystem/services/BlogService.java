@@ -1,6 +1,7 @@
 package com.portfolio.BlogManagementSystem.services;
 
 import com.portfolio.BlogManagementSystem.dtos.BlogResponseDto;
+import com.portfolio.BlogManagementSystem.dtos.CommentResponseDto;
 import com.portfolio.BlogManagementSystem.dtos.CreateBlogDto;
 import com.portfolio.BlogManagementSystem.dtos.UpdateBlogDto;
 import org.springframework.stereotype.Service;

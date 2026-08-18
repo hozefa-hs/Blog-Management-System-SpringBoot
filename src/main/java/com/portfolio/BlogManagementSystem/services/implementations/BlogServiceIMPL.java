@@ -1,9 +1,11 @@
 package com.portfolio.BlogManagementSystem.services.implementations;
 
 import com.portfolio.BlogManagementSystem.dtos.BlogResponseDto;
+import com.portfolio.BlogManagementSystem.dtos.CommentResponseDto;
 import com.portfolio.BlogManagementSystem.dtos.CreateBlogDto;
 import com.portfolio.BlogManagementSystem.dtos.UpdateBlogDto;
 import com.portfolio.BlogManagementSystem.entities.Blog;
+import com.portfolio.BlogManagementSystem.entities.Comment;
 import com.portfolio.BlogManagementSystem.entities.User;
 import com.portfolio.BlogManagementSystem.exceptions.ResourceNotFoundException;
 import com.portfolio.BlogManagementSystem.repositories.BlogRepository;
@@ -101,5 +103,6 @@ public class BlogServiceIMPL implements BlogService {
 
         return modelMapper.map(updatedBlog, BlogResponseDto.class);
     }
+
 }
 
