@@ -15,6 +15,9 @@ import com.portfolio.BlogManagementSystem.services.CommentService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,17 +50,25 @@ public class CommentServiceIMPL implements CommentService {
 
 
     @Override
-    public List<CommentResponseDto> getAllCommentsByBlogId(Long blogId) {
+    public Page<CommentResponseDto> getAllCommentsByBlogId(Long blogId, int page, int size) {
+
         blogRepository.findById(blogId).orElseThrow(() -> new ResourceNotFoundException("Blog with id " + blogId + " not found"));
-        List<Comment> commentList = commentRepository.findAllByBlogId(blogId);
-        return commentList.stream().map(comment -> modelMapper.map(comment, CommentResponseDto.class)).toList();
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Comment> commentList = commentRepository.findAllByBlogId(blogId, pageable);
+        return commentList.map(comment -> modelMapper.map(comment, CommentResponseDto.class));
     }
 
     @Override
-    public List<CommentResponseDto> getAllCommentsByUserId(Long userId) {
+    public Page<CommentResponseDto> getAllCommentsByUserId(Long userId, int page, int size) {
+
         userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User with id " + userId + " not found"));
-        List<Comment> commentList = commentRepository.findAllByUserId(userId);
-        return commentList.stream().map(comment -> modelMapper.map(comment, CommentResponseDto.class)).toList();
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Comment> commentList = commentRepository.findAllByUserId(userId, pageable);
+        return commentList.map(comment -> modelMapper.map(comment, CommentResponseDto.class));
     }
 
     @Override

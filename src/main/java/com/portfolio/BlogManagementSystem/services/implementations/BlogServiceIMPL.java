@@ -16,6 +16,9 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -44,21 +47,23 @@ public class BlogServiceIMPL implements BlogService {
     }
 
     @Override
-    public List<BlogResponseDto> getAllBlogs() {
-        List<Blog> blogList = blogRepository.findAll();
+    public Page<BlogResponseDto> getAllBlogs(int page, int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Blog> blogList = blogRepository.findAll(pageable);
         return blogList
-                .stream()
-                .map(blog -> modelMapper.map(blog, BlogResponseDto.class))
-                .toList();
+                .map(blog -> modelMapper.map(blog, BlogResponseDto.class));
     }
 
     @Override
-    public List<BlogResponseDto> getAllBlogsByUserId(Long userId) {
-        List<Blog> allBlogsByUserIdList = blogRepository.findAllByUserId(userId);
+    public Page<BlogResponseDto> getAllBlogsByUserId(Long userId, int page, int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Blog> allBlogsByUserIdList = blogRepository.findAllByUserId(userId, pageable);
         return allBlogsByUserIdList
-                .stream()
-                .map(blog -> modelMapper.map(blog, BlogResponseDto.class))
-                .toList();
+                .map(blog -> modelMapper.map(blog, BlogResponseDto.class));
     }
 
     //@PreAuthorize("hasAuthority('BLOG_DELETE')")

@@ -9,6 +9,7 @@ import com.portfolio.BlogManagementSystem.services.CommentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.sql.Update;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -36,14 +37,22 @@ public class CommentController {
 
 
     @GetMapping("/blogs/{blogId}/comments")
-    public ResponseEntity<List<CommentResponseDto>> getAllCommentsOfBlog(@PathVariable Long blogId) {
-        List<CommentResponseDto> allCommentsByBlogId = commentService.getAllCommentsByBlogId(blogId);
+    public ResponseEntity<Page<CommentResponseDto>> getAllCommentsOfBlog(
+            @PathVariable Long blogId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
+    ) {
+        Page<CommentResponseDto> allCommentsByBlogId = commentService.getAllCommentsByBlogId(blogId, page, size);
         return ResponseEntity.ok(allCommentsByBlogId);
     }
 
     @GetMapping("/my-comments")
-    public ResponseEntity<List<CommentResponseDto>> getAllCommentsOfUser(@AuthenticationPrincipal User user) {
-        List<CommentResponseDto> allCommentsByUserId = commentService.getAllCommentsByUserId(user.getId());
+    public ResponseEntity<Page<CommentResponseDto>> getAllCommentsOfUser(
+            @AuthenticationPrincipal User user,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
+    ) {
+        Page<CommentResponseDto> allCommentsByUserId = commentService.getAllCommentsByUserId(user.getId(), page, size);
         return ResponseEntity.ok(allCommentsByUserId);
     }
 

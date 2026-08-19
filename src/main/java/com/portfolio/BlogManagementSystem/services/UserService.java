@@ -2,6 +2,8 @@ package com.portfolio.BlogManagementSystem.services;
 
 import com.portfolio.BlogManagementSystem.dtos.CreateUserDto;
 import com.portfolio.BlogManagementSystem.dtos.UserResponseDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,7 +13,7 @@ public interface UserService {
 
     UserResponseDto createUser(CreateUserDto createUserDto);
 
-    List<UserResponseDto> findAllUsers();
+    Page<UserResponseDto> findAllUsers(int page, int size);
 
     UserResponseDto findUserById(Long id);
 

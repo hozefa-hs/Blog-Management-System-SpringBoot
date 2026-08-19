@@ -6,6 +6,7 @@ import com.portfolio.BlogManagementSystem.services.BlogService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class BlogTests {
 
     @Test
     void getAllBlogsTest() {
-        List<BlogResponseDto> allBlogs = blogService.getAllBlogs();
+        Page<BlogResponseDto> allBlogs = blogService.getAllBlogs(0,5);
 
         for (BlogResponseDto blog : allBlogs) {
             System.out.println(blog);

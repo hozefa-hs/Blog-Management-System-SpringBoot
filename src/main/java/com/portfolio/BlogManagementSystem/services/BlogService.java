@@ -4,6 +4,8 @@ import com.portfolio.BlogManagementSystem.dtos.BlogResponseDto;
 import com.portfolio.BlogManagementSystem.dtos.CommentResponseDto;
 import com.portfolio.BlogManagementSystem.dtos.CreateBlogDto;
 import com.portfolio.BlogManagementSystem.dtos.UpdateBlogDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,9 +15,9 @@ public interface BlogService {
 
     BlogResponseDto createBlog(CreateBlogDto createBlogDto, Long userId);
 
-    List<BlogResponseDto> getAllBlogs();
+    Page<BlogResponseDto> getAllBlogs(int page, int size);
 
-    List<BlogResponseDto> getAllBlogsByUserId(Long userId);
+    Page<BlogResponseDto> getAllBlogsByUserId(Long userId, int page, int size);
 
     void deleteBlog(Long userId, Long blogId);
 

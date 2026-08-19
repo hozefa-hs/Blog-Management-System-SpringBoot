@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -37,7 +38,7 @@ public class UserTests {
 
     @Test
     void findAllUsersTest() {
-        List<UserResponseDto> allUsers = userService.findAllUsers();
+        Page<UserResponseDto> allUsers = userService.findAllUsers(0, 5);
         for (UserResponseDto user : allUsers) {
             System.out.println(user);
         }

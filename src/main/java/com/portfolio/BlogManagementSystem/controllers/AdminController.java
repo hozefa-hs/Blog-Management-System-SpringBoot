@@ -3,6 +3,7 @@ package com.portfolio.BlogManagementSystem.controllers;
 import com.portfolio.BlogManagementSystem.dtos.UserResponseDto;
 import com.portfolio.BlogManagementSystem.services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +18,12 @@ public class AdminController {
     private final UserService userService;
 
     @GetMapping("all-users")
-    public ResponseEntity<List<UserResponseDto>> getAllUsers() {
-        List<UserResponseDto> allUsers = userService.findAllUsers();
+    public ResponseEntity<Page<UserResponseDto>> getAllUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
+    ) {
+
+        Page<UserResponseDto> allUsers = userService.findAllUsers(page, size);
         return ResponseEntity.ok(allUsers);
     }
 

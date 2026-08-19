@@ -7,6 +7,7 @@ import com.portfolio.BlogManagementSystem.entities.User;
 import com.portfolio.BlogManagementSystem.services.BlogService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,20 +32,34 @@ public class BlogController {
 
     @GetMapping("/getAllMyBlogs")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<List<BlogResponseDto>> getAllBlogsByUserId(@AuthenticationPrincipal User user) {
-        List<BlogResponseDto> blogsByUserId = blogService.getAllBlogsByUserId(user.getId());
+    public ResponseEntity<Page<BlogResponseDto>> getAllBlogsByUserId(
+            @AuthenticationPrincipal User user,
+            @RequestParam(defaultValue = "0")
+            int page,
+
+            @RequestParam(defaultValue = "5")
+            int size
+    ) {
+        Page<BlogResponseDto> blogsByUserId = blogService.getAllBlogsByUserId(user.getId(), page, size);
         return ResponseEntity.ok(blogsByUserId);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all-blogs")
-    public ResponseEntity<List<BlogResponseDto>> getAllBlogs() {
-        List<BlogResponseDto> allBlogs = blogService.getAllBlogs();
+    public ResponseEntity<Page<BlogResponseDto>> getAllBlogs(
+            @RequestParam(defaultValue = "0")
+            int page,
+
+            @RequestParam(defaultValue = "5")
+            int size
+    ) {
+
+        Page<BlogResponseDto> allBlogs = blogService.getAllBlogs(page, size);
         return ResponseEntity.ok(allBlogs);
     }
 
     @DeleteMapping("/delete/{blogId}")
-    public ResponseEntity<Void> deleteBlog(@PathVariable Long blogId, @AuthenticationPrincipal User user){
+    public ResponseEntity<Void> deleteBlog(@PathVariable Long blogId, @AuthenticationPrincipal User user) {
         blogService.deleteBlog(user.getId(), blogId);
         return ResponseEntity.noContent().build();
     }
