@@ -5,6 +5,10 @@ import com.portfolio.BlogManagementSystem.dtos.CreateBlogDto;
 import com.portfolio.BlogManagementSystem.dtos.UpdateBlogDto;
 import com.portfolio.BlogManagementSystem.entities.User;
 import com.portfolio.BlogManagementSystem.services.BlogService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,13 +20,24 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
+@Tag(
+        name = "Blog APIs",
+        description = "Operations related to blog management"
+)
 @RestController
 @RequestMapping("/blogs")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Bearer Authentication") //This annotation tells swagger that which controllers require JWT.
 public class BlogController {
 
     private final BlogService blogService;
 
+
+    @Operation(
+            summary = "Create a new blog",
+            description = "Allows authenticated users to create blogs"
+    )
     @PostMapping("/create-blog")
     @PreAuthorize("hasAuthority('BLOG_WRITE')")
     public ResponseEntity<BlogResponseDto> createBlog(@RequestBody @Valid CreateBlogDto createBlogDto, @AuthenticationPrincipal User user) {
@@ -59,7 +74,15 @@ public class BlogController {
     }
 
     @DeleteMapping("/delete/{blogId}")
-    public ResponseEntity<Void> deleteBlog(@PathVariable Long blogId, @AuthenticationPrincipal User user) {
+    public ResponseEntity<Void> deleteBlog(
+
+            @Parameter(
+                    description = "Unique ID of the blog",
+                    example = "1",
+                    required = true
+            )
+            @PathVariable Long blogId,
+            @AuthenticationPrincipal User user) {
         blogService.deleteBlog(user.getId(), blogId);
         return ResponseEntity.noContent().build();
     }

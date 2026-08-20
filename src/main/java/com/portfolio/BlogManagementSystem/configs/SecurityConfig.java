@@ -36,9 +36,10 @@ public class SecurityConfig {
                         //the below requestMatchers is replaced by method security @PreAuthorize("hasAuthority('BLOG_WRITE')")
                         //.requestMatchers(HttpMethod.POST, "/blogs/create-blog").hasAuthority(Permissions.BLOG_WRITE.name())
                         //.requestMatchers("/blogs/all-blogs").hasRole("ADMIN")
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         .anyRequest().authenticated());
 
-                //.oauth2Login(Customizer.withDefaults());
+        //.oauth2Login(Customizer.withDefaults());
 
         //request first comes to JwtAuthFilter and if user credentials are correct it will set
         //the security context holder and then request does not go to UsernamePasswordAuthenticationFilter.
